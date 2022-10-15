@@ -1,0 +1,269 @@
+<style type="text/css">
+*{
+font-family: Arial;
+font-size: 12px;
+margin:0px;
+padding:0px;
+}
+@page {
+ margin-left:3cm 2cm 2cm 2cm;
+}
+.container{
+	margin-top: 10px;
+	width: 780px;
+	margin-left: auto;
+	margin-right: auto;
+}
+table.grid{
+width:20.4cm ;
+font-size: 9pt;
+border-collapse:collapse;
+}
+table.grid th{
+padding-top:1mm;
+padding-bottom:1mm;
+}
+table.grid th{
+background: #F0F0F0;
+border: 0.2mm solid #000;
+text-align:center;
+padding-left:0.2cm;
+}
+table.grid tr td{
+padding-top:0.5mm;
+padding-bottom:0.5mm;
+padding-left:2mm;
+border:0.2mm solid #000;
+}
+h1{
+font-size: 18pt;
+}
+h2{
+font-size: 14pt;
+}
+h3{
+font-size: 10pt;
+}
+.header{
+display: block;
+width:20.4cm ;
+margin-bottom: 0.3cm;
+text-align: center;
+margin-top: 10px;
+}
+.attr{
+font-size:9pt;
+width: 100%;
+padding-top:2pt;
+padding-bottom:2pt;
+border-top: 0.2mm solid #000;
+border-bottom: 0.2mm solid #000;
+}
+.pagebreak {
+width:20cm ;
+page-break-after: always;
+margin-bottom:10px;
+}
+.akhir {
+width:20cm ;
+}
+.page {
+font-size:13px;
+padding-top: 20px;
+}
+.footer{
+	padding-top: 20px;
+	margin-left: 600px;
+}
+</style>
+<?php
+error_reporting(0);
+include '../fungsi/fungsi.php';
+if (isset($_GET['tgl1']) && isset($_GET['tgl2'])) {
+	$dat = $cetaklaporan->laporan_pembelian_bulan($_GET['tgl1'],$_GET['tgl2']);
+}else{
+	$dat = $cetaklaporan->laporan_semua_pembelian();
+}include "../config/koneksi.php";
+
+$kode=$_GET['kode_anggota'];
+$kode_tabungan=$_GET['kode_tabungan'];
+require('pdf/fpdf.php');
+$pdf = new FPDF("L","cm","A4");
+
+$pdf->SetMargins(2,1,1);
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$pdf->SetFont('Times','B',11);
+$pdf->MultiCell(19.5,0.5,'',0,'L'); 
+$pdf->SetX(4);   
+$pdf->SetFont('Arial','B',10);
+$pdf->SetX(4);
+$pdf->Image('../logo2.jpg',2,1.3,2,1.6);
+$pdf->SetX(4); 
+$pdf->MultiCell(19.5,0.5,'SIMPAN PINJAM SMK CAHAYA HATI',0,'L');
+$pdf->SetX(4);
+$pdf->MultiCell(19.5,0.5,'YAYASAN PENDIDIKAN AL-MAHMUDAH',0,'L');
+$pdf->SetX(4);
+$pdf->MultiCell(30.5,0.5,'Jl.Marsekal Surya Darma No.50 Kel. Selapajang Jaya RT.004 RW.004 Kec.Neglasari Kota Tangerang Telp. 021-5590254
+',0,'L');
+$pdf->SetX(4);
+$pdf->Line(1,3.1,28.5,3.1);
+$pdf->SetLineWidth(0.1);      
+$pdf->Line(1,3.2,28.5,3.2);   
+$pdf->SetLineWidth(0);
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',14);
+$pdf->Cell(25.2,0.7,"Laporan Seluruh Anggota",0,10,'C');
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(5,0.7,"\nDi cetak pada : ".date("D-d/m/Y"),0,0,'C');
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(2, 0.8, 'NO', 1, 0, 'C');
+$pdf->Cell(3, 0.8, 'Kode Anggota', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Nama', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'No Identitas', 1, 0, 'C');
+
+$pdf->Cell(4, 0.8, 'Alamat', 1, 0, 'C');
+$pdf->Cell(3, 0.8, 'Kelamin', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Pekerjaan', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Tanggal Masuk', 1, 0, 'C');
+$pdf->Cell(2, 0.8, 'Status', 1, 1, 'C');
+
+
+$pdf->SetFont('Arial','',10);
+$no=1;
+$query=mysql_query("SELECT * FROM tb_anggota");
+while($lihat=mysql_fetch_array($query)){
+	$pdf->Cell(2, 0.8, $no , 1, 0, 'C');
+    $pdf->Cell(3, 0.8, $lihat['kode_anggota'],1, 0, 'C');
+    $pdf->Cell(4, 0.8, $lihat['nama_anggota'],1, 0, 'C');
+    $pdf->Cell(4, 0.8, $lihat['no_identitas'],1, 0, 'C');
+    $pdf->Cell(4, 0.8, $lihat['alamat_anggota'],1, 0, 'C');
+    $pdf->Cell(3, 0.8, $lihat['jenis_kelamin'], 1, 0,'C');
+    $pdf->Cell(4, 0.8, $lihat['pekerjaan'],1, 0,'C');
+	$pdf->Cell(4, 0.8, $lihat['tgl_masuk'],1, 0,'C');
+	$pdf->Cell(2, 0.8, $lihat['status'],1, 1,'C');
+    
+
+    	$nomer++;}
+
+
+$pdf->SetMargins(2,1,1);
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$pdf->SetFont('Times','B',11);
+$pdf->MultiCell(19.5,0.5,'',0,'L'); 
+$pdf->SetX(4);   
+$pdf->SetFont('Arial','B',10);
+$pdf->SetX(4);
+$pdf->Image('../logo2.jpg',2,1.3,2,1.6);
+$pdf->SetX(4); 
+$pdf->MultiCell(19.5,0.5,'SIMPAN PINJAM SMK CAHAYA HATI',0,'L');
+$pdf->SetX(4);
+$pdf->MultiCell(19.5,0.5,'YAYASAN PENDIDIKAN AL-MAHMUDAH',0,'L');
+$pdf->SetX(4);
+$pdf->MultiCell(30.5,0.5,'Jl.Marsekal Surya Darma No.50 Kel. Selapajang Jaya RT.004 RW.004 Kec.Neglasari Kota Tangerang Telp. 021-5590254
+',0,'L');
+$pdf->SetX(4);
+$pdf->Line(1,3.1,28.5,3.1);
+$pdf->SetLineWidth(0.1);      
+$pdf->Line(1,3.2,28.5,3.2);   
+$pdf->SetLineWidth(0);
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',14);
+$pdf->Cell(25.2,0.7,"Laporan Pinjaman Bulan ".$bulan."/".$tahun."",0,10,'C');
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(5,0.7,"\nDi cetak pada : ".date("D-d/m/Y"),0,0,'C');
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(1, 0.8, 'NO', 1, 0, 'C');
+$pdf->Cell(3, 0.8, 'Kode Pinjam', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Nama Anggota', 1, 0, 'C');
+$pdf->Cell(3, 0.8, 'Tanggal Pinjam', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Jenis Pinjam', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Besar Pinjam', 1, 0, 'C');
+$pdf->Cell(3, 0.8, 'Lama Angsuran', 1, 0, 'C');
+$pdf->Cell(3, 0.8, 'Status', 1, 1, 'C');
+$pdf->SetFont('Arial','',10);
+$sql=mysql_query("SELECT * from tb_pinjam where month(tgl_entri)='$bulan' and year(tgl_entri)='$tahun'");
+    $nomer=1;
+    while($data=mysql_fetch_array($sql))
+    	{
+    		$kd_a=$data['kode_anggota'];
+    		$anggota=mysql_fetch_array(mysql_query("SELECT nama_anggota from tb_anggota where kode_anggota='$kd_a'"));
+    		$kd_j=$data['kode_jenis_pinjam'];
+    		$jenis=mysql_fetch_array(mysql_query("SELECT nama_pinjaman from tb_jenis_pinjam where kode_jenis_pinjam='$kd_j'"));
+$pdf->Cell(1, 0.8, $nomer , 1, 0, 'C');
+$pdf->Cell(3, 0.8, $kd_p=$data['kode_pinjam'], 1, 0, 'C');
+$pdf->Cell(4, 0.8, $anggota['nama_anggota'], 1, 0, 'C');
+$pdf->Cell(3, 0.8, $data['tgl_entri'], 1, 0, 'C');
+$pdf->Cell(4, 0.8, $jenis['nama_pinjaman'], 1, 0, 'C');
+$pdf->Cell(4, 0.8, number_format($data['besar_pinjam']), 1, 0, 'C');
+$pdf->Cell(3, 0.8, "".$data['lama_angsuran']." Bulan", 1, 0, 'C');
+$jum=mysql_num_rows(mysql_query("SELECT*from tb_angsur where kode_pinjam='$kd_p' and kode_anggota='$kd_a'"));$lama=mysql_fetch_array(mysql_query("SELECT lama_angsuran from tb_pinjam where kode_pinjam='$kd_p' and kode_anggota='$kd_a'"));
+			if($jum==$lama['lama_angsuran'])
+			{
+				$pdf->Cell(3, 0.8, 'Lunas', 1, 1, 'C');
+			}
+			else
+			{
+				$pdf->Cell(3, 0.8, 'Belum Lunas', 1, 1, 'C');
+			}
+
+    	$nomer++;}
+$pdf->SetMargins(2,1,1);
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$pdf->SetFont('Times','B',11);
+$pdf->MultiCell(19.5,0.5,'',0,'L'); 
+$pdf->SetX(4);   
+$pdf->SetFont('Arial','B',10);
+$pdf->SetX(4);
+$pdf->Image('../logo2.jpg',2,1.3,2,1.6);
+$pdf->SetX(4); 
+$pdf->MultiCell(19.5,0.5,'SIMPAN PINJAM SMK CAHAYA HATI',0,'L');
+$pdf->SetX(4);
+$pdf->MultiCell(19.5,0.5,'YAYASAN PENDIDIKAN AL-MAHMUDAH',0,'L');
+$pdf->SetX(4);
+$pdf->MultiCell(30.5,0.5,'Jl.Marsekal Surya Darma No.50 Kel. Selapajang Jaya RT.004 RW.004 Kec.Neglasari Kota Tangerang Telp. 021-5590254
+',0,'L');
+$pdf->SetX(4);
+$pdf->Line(1,3.1,28.5,3.1);
+$pdf->SetLineWidth(0.1);      
+$pdf->Line(1,3.2,28.5,3.2);   
+$pdf->SetLineWidth(0);
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',14);
+$pdf->Cell(25.2,0.7,"Laporan Seluruh Tabungan Anggota Bulan ".$bulan."/".$tahun."",0,10,'C');
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(5,0.7,"\nDi cetak pada : ".date("D-d/m/Y"),0,0,'C');
+$pdf->ln(1);
+$pdf->SetFont('Arial','B',10);
+$pdf->Cell(3, 0.8, 'NO', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Kode Tabungan', 1, 0, 'C');
+$pdf->Cell(5, 0.8, 'Nama Anggota', 1, 0, 'C');
+$pdf->Cell(4, 0.8, 'Besar Tabungan', 1, 0, 'C');
+$pdf->Cell(5, 0.8, 'Tanggal Mulai', 1, 1, 'C');
+$pdf->SetFont('Arial','',10);
+	$query = mysql_query("SELECT * from tb_tabungan where month(tgl_mulai)='$bulan' and year(tgl_mulai)='$tahun'");
+	$no=1;	
+	while($data=mysql_fetch_array($query)){
+		$kd_a=$data['kode_anggota'];
+		$anggota=mysql_fetch_array(mysql_query("SELECT nama_anggota from tb_anggota where kode_anggota='$kd_a'"));
+$pdf->Cell(3, 0.8, $no, 1, 0, 'C');
+$pdf->Cell(4, 0.8, $data['kode_tabungan'], 1, 0, 'C');
+$pdf->Cell(5, 0.8, $anggota['nama_anggota'], 1, 0, 'C');
+$pdf->Cell(4, 0.8, number_format($data['besar_tabungan']), 1, 0, 'C');
+$pdf->Cell(5, 0.8, $data['tgl_mulai'], 1, 1, 'C');
+
+$no++;}
+
+?>
+
+
+<script type="text/javascript">
+	window.print();
+</script>
